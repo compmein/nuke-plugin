@@ -1,0 +1,15 @@
+# macOS 系统垃圾
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Nuke/Python 产生的临时文件
+*.pyc
+__pycache__/
+
+# 你的主项目文件夹（万一你又拷进去了）
+honolulu-portal/
+
+# 环境变量
+.env
