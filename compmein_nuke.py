@@ -903,48 +903,42 @@ def _submit_kling_scenario(scenario_idx):
                 finally:
                     os.unlink(path)
 
-            # Handle video: trim + upload via backend
+            # Handle video: upload to GCS first, then trim via backend
             video_signed_url = ""
             if sc["video"] and video_path:
                 def _ut():
                     n = nuke.toNode(nn)
                     if n:
                         n[st_knob].setValue(
-                            "<b style='color:#f0a000'>Trimming video...</b>")
+                            "<b style='color:#f0a000'>Uploading video...</b>")
                 nuke.executeInMainThread(_ut)
 
-                with open(video_path, "rb") as vf:
-                    video_data = vf.read()
+                # Step 1: Upload raw video to GCS via signed URL
+                vid_upload_url, vid_gcs_path = _get_upload_url(
+                    api_key, content_type="video/mp4", ext="mp4")
+                _upload_to_gcs(vid_upload_url, video_path, "video/mp4")
 
-                trim_dur = str(dur)
-                vid_boundary = "----CompMeInVidBound"
-                vid_body = b""
-                for fname, fval in [("bucket_name", "compmein-veo"),
-                                     ("duration", trim_dur),
-                                     ("user_id", "nuke_upload"),
-                                     ("purpose", "temp"),
-                                     ("prefix", "nk")]:
-                    vid_body += "--{}\r\n".format(vid_boundary).encode()
-                    vid_body += "Content-Disposition: form-data; name=\"{}\"\r\n\r\n".format(fname).encode()
-                    vid_body += fval.encode("utf-8")
-                    vid_body += b"\r\n"
+                def _ut2():
+                    n = nuke.toNode(nn)
+                    if n:
+                        n[st_knob].setValue(
+                            "<b style='color:#f0a000'>Trimming video...</b>")
+                nuke.executeInMainThread(_ut2)
 
-                vid_filename = os.path.basename(video_path)
-                vid_body += "--{}\r\n".format(vid_boundary).encode()
-                vid_body += "Content-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\n".format(vid_filename).encode()
-                vid_body += "Content-Type: video/mp4\r\n\r\n".encode()
-                vid_body += video_data
-                vid_body += b"\r\n"
-                vid_body += "--{}--\r\n".format(vid_boundary).encode()
-
-                trim_req = urllib.request.Request(
-                    BACKEND_URL + "/trim_and_upload",
-                    data=vid_body,
-                    headers={"Content-Type": "multipart/form-data; boundary={}".format(vid_boundary)},
-                    method="POST"
-                )
-                with urllib.request.urlopen(trim_req, timeout=300) as resp:
-                    trim_resp = json.loads(resp.read().decode("utf-8"))
+                # Step 2: Ask backend to trim from GCS path
+                trim_resp, trim_code = _post_json_body(
+                    "/trim_from_gcs", api_key,
+                    {
+                        "gcs_path": vid_gcs_path,
+                        "bucket_name": "compmein-veo",
+                        "duration": dur,
+                        "user_id": "nuke_upload",
+                        "purpose": "temp",
+                        "prefix": "nk",
+                    },
+                    base=BACKEND_URL)
+                if trim_code != 200:
+                    raise RuntimeError("Video trim failed: {}".format(trim_resp))
 
                 video_signed_url = trim_resp.get("signedUrl") or trim_resp.get("url")
                 if not video_signed_url:
