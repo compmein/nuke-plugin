@@ -17,7 +17,7 @@ import urllib.error
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 BASE_URL = "https://www.compmein.com"
-BACKEND_URL = "https://veo-backend-776398590286.us-central1.run.app"
+BACKEND_URL = "https://veo-backend-484563986683.us-central1.run.app"
 SETTINGS_FILE = os.path.join(os.path.expanduser("~"), ".compmein_nuke_settings.json")
 
 CLR_RENDERING = 0xf0a000ff   # amber
@@ -930,7 +930,7 @@ def _submit_kling_scenario(scenario_idx):
                     "/trim_from_gcs", api_key,
                     {
                         "gcs_path": vid_gcs_path,
-                        "bucket_name": "compmein-veo",
+                        "bucket_name": "compmein-assets",
                         "duration": dur,
                         "user_id": "nuke_upload",
                         "purpose": "temp",
@@ -968,8 +968,8 @@ def _submit_kling_scenario(scenario_idx):
                 keep_snd = "yes" if node["{}_keep_sound".format(p)].value() else "no"
                 fields["keep_original_sound"] = keep_snd
 
-                endpoint = "/api/video/kling/motion-control"
-                status_endpoint = "/api/video/kling/motion-control/status"
+                endpoint = "/api/video/kling/v3-0"
+                status_endpoint = "/api/video/kling/v3-0/status"
             else:
                 fields = {
                     "prompt": prompt,
@@ -983,8 +983,8 @@ def _submit_kling_scenario(scenario_idx):
                     if sc["refer"]:
                         fields["refer_type"] = sc["refer"]
 
-                endpoint = "/api/video/kling/v3"
-                status_endpoint = "/api/video/kling/v3/status"
+                endpoint = "/api/video/kling/v3-omni"
+                status_endpoint = "/api/video/kling/v3-omni/status"
 
             resp, code = _post_json(endpoint, api_key, fields, files)
 
