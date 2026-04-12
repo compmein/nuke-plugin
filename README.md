@@ -7,33 +7,13 @@ AI-powered image generation, background removal, and Kling V3 video generation �
 ## Features
 
 ### Image Generation
-| Model | Cost |
-|---|---|
-| Quick 0.5K | 9 tokens |
-| Quick 1K | 13 tokens |
-| Quick 2K | 21 tokens |
-| Quick 4K | 31 tokens |
-| Pro 2K | 30 tokens |
-| Pro 4K | 50 tokens |
-
-Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image.
+Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image. Multiple model/resolution options available.
 
 ### Remove Background (Alpha)
-1 token per image. Outputs a Read node (PNG with alpha) + Premult node, ready to comp.
+Outputs a Read node (PNG with alpha) + Premult node, ready to comp.
 
 ### Kling V3 Video Generation
-6 scenarios in one node:
-
-| Tab | Description | Duration | Cost |
-|---|---|---|---|
-| **Text to Video** | Prompt only | 3–15s | 17–23 tok/s |
-| **Image to Video** | First frame + up to 6 refs | 3–15s | 17–23 tok/s |
-| **First + Last Frame** | Interpolate between two frames | 3–15s | 17–23 tok/s |
-| **I2V + Video Ref** | First frame + video reference | 3–10s | 25–34 tok/s |
-| **Video Restyle** | Style-transfer a video | 3–10s | 25–34 tok/s |
-| **Motion Control** | Drive character image with motion video | 3–30s | 25–34 tok/s |
-
-Std mode = 720p, Pro mode = 1080p.
+6 scenarios in one node: Text to Video, Image to Video, First + Last Frame, I2V + Video Ref, Video Restyle, and Motion Control. Std mode = 720p, Pro mode = 1080p.
 
 ---
 

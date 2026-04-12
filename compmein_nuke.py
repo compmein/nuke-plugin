@@ -26,12 +26,12 @@ CLR_ERROR     = 0xc62828ff   # red
 CLR_DEFAULT   = 0            # reset
 
 GEN_MODELS = [
-    ("quick_0.5k", "Quick 0.5K", 9),
-    ("quick_1k",   "Quick 1K",  13),
-    ("quick_2k",   "Quick 2K",  21),
-    ("quick_4k",   "Quick 4K",  31),
-    ("pro_2k",     "Pro 2K",    30),
-    ("pro_4k",     "Pro 4K",    50),
+    ("quick_0.5k", "Quick 0.5K", 14),
+    ("quick_1k",   "Quick 1K",  20),
+    ("quick_2k",   "Quick 2K",  30),
+    ("quick_4k",   "Quick 4K",  45),
+    ("pro_2k",     "Pro 2K",    40),
+    ("pro_4k",     "Pro 4K",    72),
 ]
 GEN_MODEL_LABELS = ["{} ({} tok)".format(m[1], m[2]) for m in GEN_MODELS]
 GEN_AR = ["16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
@@ -293,8 +293,8 @@ _results = {}
 def _kling_cost(dur, mode, has_video_ref=False):
     d = int(dur)
     if has_video_ref:
-        return d * (34 if mode == "pro" else 25)
-    return d * (23 if mode == "pro" else 17)
+        return d * (50 if mode == "pro" else 38)
+    return d * (34 if mode == "pro" else 25)
 
 
 def _add_settings_to_user_tab(node):
@@ -777,7 +777,7 @@ def _on_video_knob_changed():
                 dur = int(node[dur_name].value())
                 res_idx = int(node[res_name].getValue())
                 mode = "pro" if res_idx == 1 else "std"
-                cost = dur * (34 if mode == "pro" else 25)
+                cost = dur * (50 if mode == "pro" else 38)
                 node["{}_cost".format(p)].setValue(
                     "<b>Cost: {} tokens</b>".format(cost))
             else:
