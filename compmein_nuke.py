@@ -26,7 +26,6 @@ CLR_ERROR     = 0xc62828ff   # red
 CLR_DEFAULT   = 0            # reset
 
 GEN_MODELS = [
-    ("quick_0.5k", "NB2 0.5K",     14),
     ("quick_1k",   "NB2 1K",       20),
     ("quick_2k",   "NB2 2K",       30),
     ("quick_4k",   "NB2 4K",       45),
@@ -373,7 +372,7 @@ def create_image_node():
     node.addKnob(nuke.Multiline_Eval_String_Knob("gen_prompt", "Prompt"))
 
     k = nuke.Enumeration_Knob("gen_model", "Model", GEN_MODEL_LABELS)
-    k.setValue(GEN_MODEL_LABELS[1])
+    k.setValue(GEN_MODEL_LABELS[0])
     node.addKnob(k)
 
     k = nuke.Enumeration_Knob("gen_ar", "Aspect Ratio", GEN_AR)
@@ -385,7 +384,7 @@ def create_image_node():
         "Quick: max 14, Pro: max 14.</small>"))
 
     node.addKnob(nuke.Text_Knob("gen_cost", "",
-        "<b>Cost: {} tokens</b>".format(GEN_MODELS[1][2])))
+        "<b>Cost: {} tokens</b>".format(GEN_MODELS[0][2])))
 
     node.addKnob(nuke.Text_Knob("gen_div", "", ""))
 

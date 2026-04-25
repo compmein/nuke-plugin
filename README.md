@@ -7,7 +7,7 @@ Nano Banana 2 and Nano Banana Pro image generation, background removal, and Klin
 ## Features
 
 ### Nano Banana 2 / Nano Banana Pro
-Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image. Quick (Nano Banana 2) at 0.5K / 1K / 2K / 4K and Pro (Nano Banana Pro) at 2K / 4K. Aspect ratio defaults to **Auto** — reads input 0 dimensions and snaps to the closest supported ratio; falls back to 16:9 for pure text-to-image.
+Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image. Nano Banana 2 at 1K / 2K / 4K and Nano Banana Pro at 2K / 4K. Aspect ratio defaults to **Auto** — reads input 0 dimensions and snaps to the closest supported ratio; falls back to 16:9 for pure text-to-image.
 
 ### Remove Background (Alpha)
 Outputs a Read node (PNG with alpha) + Premult node, ready to comp.
