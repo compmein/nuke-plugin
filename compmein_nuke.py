@@ -34,7 +34,9 @@ GEN_MODELS = [
     ("pro_4k",     "Pro 4K",    72),
 ]
 GEN_MODEL_LABELS = ["{} ({} tok)".format(m[1], m[2]) for m in GEN_MODELS]
-GEN_AR = ["16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
+# "Auto" reads input 0 dimensions at submit time and snaps to the closest
+# supported ratio. Falls back to 16:9 if input 0 is empty.
+GEN_AR = ["Auto", "16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
 
 KLING_SCENARIOS = [
     "Text to Video",
@@ -44,7 +46,41 @@ KLING_SCENARIOS = [
     "Video Restyle",
 ]
 KLING_RESOLUTIONS = ["720p", "1080p"]
-KLING_AR = ["16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
+KLING_AR = ["Auto", "16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
+# Supported AR choices excluding the Auto sentinel — used by _snap_ar.
+_AR_CHOICES = ["16:9", "1:1", "9:16", "4:3", "3:4", "3:2", "2:3"]
+
+
+def _snap_ar(width, height):
+    """Snap (width, height) to the closest supported AR string.
+    Returns one of _AR_CHOICES. Used when the user selects "Auto".
+    """
+    if not width or not height:
+        return "16:9"
+    target = float(width) / float(height)
+    best = "16:9"
+    best_diff = float("inf")
+    for ar in _AR_CHOICES:
+        a, b = ar.split(":")
+        ratio = float(a) / float(b)
+        diff = abs(ratio - target)
+        if diff < best_diff:
+            best_diff = diff
+            best = ar
+    return best
+
+
+def _resolve_ar(node, ar_value, input_idx=0):
+    """If user selected 'Auto', sample input_idx dims and snap.
+    Otherwise return ar_value as-is. Falls back to 16:9 when Auto is
+    selected but the input is unconnected.
+    """
+    if ar_value != "Auto":
+        return ar_value
+    src = node.input(input_idx)
+    if not src:
+        return "16:9"
+    return _snap_ar(src.width(), src.height())
 
 
 # ── Settings ──────────────────────────────────────────────────────────────────
@@ -341,7 +377,7 @@ def create_image_node():
     node.addKnob(k)
 
     k = nuke.Enumeration_Knob("gen_ar", "Aspect Ratio", GEN_AR)
-    k.setValue("16:9")
+    k.setValue("Auto")
     node.addKnob(k)
 
     node.addKnob(nuke.Text_Knob("gen_input_info", "",
@@ -398,7 +434,7 @@ def _submit_genimage():
 
     model_idx = int(node["gen_model"].getValue())
     model_key = GEN_MODELS[model_idx][0]
-    ar = GEN_AR[int(node["gen_ar"].getValue())]
+    ar = _resolve_ar(node, GEN_AR[int(node["gen_ar"].getValue())], input_idx=0)
 
     # Render connected inputs as JPEG, upload via GCS signed URL
     ref_inputs = _render_inputs_to_tmp(node, 0, node.maxInputs(), "jpeg")
@@ -711,7 +747,7 @@ def _add_scenario_tab(node, sc):
         node.addKnob(k)
 
         k = nuke.Enumeration_Knob("{}_ar".format(p), "Aspect Ratio", KLING_AR)
-        k.setValue("16:9")
+        k.setValue("Auto")
         node.addKnob(k)
     else:
         # Motion control only has mode
@@ -831,7 +867,7 @@ def _submit_kling_scenario(scenario_idx):
         dur = int(node["{}_dur".format(p)].value())
         res_idx = int(node["{}_res".format(p)].getValue())
         mode = "pro" if res_idx == 1 else "std"
-        ar = KLING_AR[int(node["{}_ar".format(p)].getValue())]
+        ar = _resolve_ar(node, KLING_AR[int(node["{}_ar".format(p)].getValue())], input_idx=0)
 
     # Validate inputs per scenario
     if sc["first"] and not is_motion and not node.input(0):

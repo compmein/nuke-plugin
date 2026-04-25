@@ -1,19 +1,19 @@
 # CompMeIn Nuke Plugin
 
-AI-powered image generation, background removal, and Kling V3 video generation — directly inside Nuke.
+Nano Banana 2 and Nano Banana Pro image generation, background removal, and Kling V3 video generation — directly inside Nuke.
 
 ---
 
 ## Features
 
-### Image Generation
-Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image. Multiple model/resolution options available.
+### Nano Banana 2 / Nano Banana Pro
+Connect up to 14 input nodes as reference images. Outputs a Read node with the generated image. Quick (Nano Banana 2) at 0.5K / 1K / 2K / 4K and Pro (Nano Banana Pro) at 2K / 4K. Aspect ratio defaults to **Auto** — reads input 0 dimensions and snaps to the closest supported ratio; falls back to 16:9 for pure text-to-image.
 
 ### Remove Background (Alpha)
 Outputs a Read node (PNG with alpha) + Premult node, ready to comp.
 
 ### Kling V3 Video Generation
-6 scenarios in one node: Text to Video, Image to Video, First + Last Frame, I2V + Video Ref, Video Restyle, and Motion Control. Std mode = 720p, Pro mode = 1080p.
+6 scenarios in one node: Text to Video, Image to Video, First + Last Frame, I2V + Video Ref, Video Restyle, and Motion Control. Std mode = 720p, Pro mode = 1080p. Aspect ratio defaults to **Auto** (reads input 0).
 
 ---
 
