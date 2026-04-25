@@ -17,7 +17,6 @@ import urllib.error
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 BASE_URL = "https://www.compmein.com"
-BACKEND_URL = "https://veo-backend-484563986683.us-central1.run.app"
 SETTINGS_FILE = os.path.join(os.path.expanduser("~"), ".compmein_nuke_settings.json")
 
 CLR_RENDERING = 0xf0a000ff   # amber
@@ -960,18 +959,18 @@ def _submit_kling_scenario(scenario_idx):
                             "<b style='color:#f0a000'>Trimming video...</b>")
                 nuke.executeInMainThread(_ut2)
 
-                # Step 2: Ask backend to trim from GCS path
+                # Step 2: Ask backend to trim from GCS path. Proxied through
+                # compmein.com so the plugin never references the internal
+                # Cloud Run hostname directly.
                 trim_resp, trim_code = _post_json_body(
-                    "/trim_from_gcs", api_key,
+                    "/api/nuke/trim_video", api_key,
                     {
                         "gcs_path": vid_gcs_path,
                         "bucket_name": "compmein-assets",
                         "duration": dur,
-                        "user_id": "nuke_upload",
                         "purpose": "temp",
                         "prefix": "nk",
-                    },
-                    base=BACKEND_URL)
+                    })
                 if trim_code != 200:
                     raise RuntimeError("Video trim failed: {}".format(trim_resp))
 
