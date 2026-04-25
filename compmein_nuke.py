@@ -26,12 +26,12 @@ CLR_ERROR     = 0xc62828ff   # red
 CLR_DEFAULT   = 0            # reset
 
 GEN_MODELS = [
-    ("quick_0.5k", "Quick 0.5K", 14),
-    ("quick_1k",   "Quick 1K",  20),
-    ("quick_2k",   "Quick 2K",  30),
-    ("quick_4k",   "Quick 4K",  45),
-    ("pro_2k",     "Pro 2K",    40),
-    ("pro_4k",     "Pro 4K",    72),
+    ("quick_0.5k", "NB2 0.5K",     14),
+    ("quick_1k",   "NB2 1K",       20),
+    ("quick_2k",   "NB2 2K",       30),
+    ("quick_4k",   "NB2 4K",       45),
+    ("pro_2k",     "NB Pro 2K",    40),
+    ("pro_4k",     "NB Pro 4K",    72),
 ]
 GEN_MODEL_LABELS = ["{} ({} tok)".format(m[1], m[2]) for m in GEN_MODELS]
 # "Auto" reads input 0 dimensions at submit time and snaps to the closest
