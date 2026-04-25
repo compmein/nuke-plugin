@@ -108,7 +108,7 @@ Each node has an **API Key** field at the top of the User tab. Paste the key the
 
 - Nuke 13+ (Python 3)
 - No additional Python packages — pure stdlib
-- Internet access to `compmein.com` and `veo-backend-484563986683.us-central1.run.app`
+- Internet access to `compmein.com`
 
 ---
 
